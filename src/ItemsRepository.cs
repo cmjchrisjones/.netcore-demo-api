@@ -1,11 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using DemoAPI.Controllers;
-using DemoAPI.Models;
-
 namespace DemoAPI
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using DemoAPI.Controllers;
+    using DemoAPI.Models;
+    using Microsoft.EntityFrameworkCore;
+
     public class ItemsRepository : IItemsRepository
     {
         public DemoApiDbContext Db;
@@ -15,18 +17,10 @@ namespace DemoAPI
             Db = db;
         }
 
-        public void AddItem(Guid sessionId, Item item)
+        public void AddItem(Item item)
         {
-            var foundItem = Db.Requests.FirstOrDefault(x => x.Id == sessionId);
-            if (foundItem != null)
-            {
-                if (foundItem.Items == null)
-                {
-                    foundItem.Items = new List<Item>();
-                }
-                foundItem.Items.Add(item);
-                Db.SaveChanges();
-            }
+            Db.Items.Add(item);
+            Db.SaveChanges();
         }
 
         public void DeleteRequest(Guid id)
@@ -34,19 +28,30 @@ namespace DemoAPI
             var sessionToDelete = Db.Requests.FirstOrDefault(x => x.Id == id);
             if (sessionToDelete != null)
             {
-                Db.Remove(sessionToDelete);
+                Db.Requests.Remove(sessionToDelete);
+                foreach (var item in Db.Items.ToList())
+                {
+                    if (item.Request.Id == id)
+                    {
+                        Db.Remove(item);
+                        Db.SaveChanges();
+                    }
+                }
                 Db.SaveChanges();
             }
         }
 
         public List<Request> GetAllSessions()
         {
-            return Db.Requests.ToList();
+            var list = Db.Requests
+                .Include(req => req.Items)
+                .ToList();
+            return list;
         }
 
         public Request RetrieveSession(Guid sessionId)
         {
-            return Db.Requests.FirstOrDefault(x => x.Id == sessionId);
+            return Db.Requests.Include(c => c.Items).FirstOrDefault(x => x.Id == sessionId);
         }
 
         public void StartSession(Guid session)
@@ -67,6 +72,16 @@ namespace DemoAPI
                 return true;
             }
             return false;
+        }
+
+        public List<Item> GetItems()
+        {
+            return Db.Items.ToList();
+        }
+
+        public List<Item> GetItemsForSession(Guid sessionId)
+        {
+            return Db.Items.Where(x => x.Request.Id == sessionId).ToList();
         }
     }
 }

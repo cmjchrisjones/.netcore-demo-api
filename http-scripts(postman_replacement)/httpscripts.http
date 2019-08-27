@@ -1,0 +1,47 @@
+### TestAPI
+
+@name = demoApi
+
+# @name Start_Session
+GET https://{{host}}/api/start
+
+### Lets store the new session ID into a local variable
+@sessionId = {{Start_Session.response.body.sessionId}}
+
+# @name Retrieve_Session
+GET https://{{host}}/api/retrieve-session/{{sessionId}}
+Content-Type: application/json
+Accept: application/json
+
+###
+# @name Retrieve_All_Sessions
+GET https://{{host}}/api/get-all-sessions
+
+### Update the requesters details
+POST https://{{host}}/api/update-requester-info
+Content-Type: application/json
+
+{
+   "id": "{{sessionId}}",
+   "name": "Chris Jones"
+}
+
+### Add item to request
+
+POST https://{{host}}/api/add-item
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "Bouncy Castle - Dragons Lair ActivityCentre13",
+    "requestDate": "{{$datetime iso8601}}",
+    "hireDate": "2019-09-01",
+    "requestId": "{{sessionId}}"
+}
+
+### Delete
+
+DELETE https://{{host}}/api/delete/{{sessionId}}
+
+### Get Items
+GET https://{{host}}/api/get-items

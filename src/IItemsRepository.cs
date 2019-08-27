@@ -8,10 +8,12 @@ namespace DemoAPI
     public interface IItemsRepository
     {
         void StartSession(Guid session);
-        void AddItem(Guid sessionId, Item item);
+        void AddItem(Item item);
         Request RetrieveSession(Guid sessionId);
         List<Request> GetAllSessions();
         void DeleteRequest(Guid id);
         bool UpdateSession(RequesterInfo requesterInfo);
+        List<Item> GetItems();
+        List<Item> GetItemsForSession(Guid sessionId);
     }
 }

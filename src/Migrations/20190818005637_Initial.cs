@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DemoAPI.Migrations
@@ -12,7 +12,8 @@ namespace DemoAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    RequesterName = table.Column<string>(nullable: true)
+                    RequesterName = table.Column<string>(nullable: true),
+                    RequestDate = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -20,7 +21,7 @@ namespace DemoAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Item",
+                name: "Items",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -31,9 +32,9 @@ namespace DemoAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Item", x => x.Id);
+                    table.PrimaryKey("PK_Items", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Item_Requests_RequestId",
+                        name: "FK_Items_Requests_RequestId",
                         column: x => x.RequestId,
                         principalTable: "Requests",
                         principalColumn: "Id",
@@ -41,15 +42,15 @@ namespace DemoAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Item_RequestId",
-                table: "Item",
+                name: "IX_Items_RequestId",
+                table: "Items",
                 column: "RequestId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Item");
+                name: "Items");
 
             migrationBuilder.DropTable(
                 name: "Requests");

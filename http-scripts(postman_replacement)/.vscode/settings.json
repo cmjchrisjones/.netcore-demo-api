@@ -1,0 +1,13 @@
+{
+    "rest-client.environmentVariables": {
+        "$shared": {
+            "version": "v1",
+        },
+        "localhost": {
+            "host": "localhost:5001"
+        },
+        "remote": {
+            "host": "c-j.tech/testAPI"
+        }
+    }
+}

@@ -26,20 +26,19 @@ namespace DemoAPI.Controllers
         }
 
         [HttpPost]
-        [Route("/api/add-item/{item}")]
-        public IActionResult AddItem([FromBody]AddItemModel addItemModel)
+        [Route("/api/add-item")]
+        public IActionResult AddItem([FromBody]Item addItemModel)
         {
-
-            Repo.AddItem(addItemModel.Id, addItemModel.Item);
+            Repo.AddItem(addItemModel);
             return Ok("Item added");
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("/api/retrieve-session/{sessionId}")]
-        public IActionResult GetSession([FromBody] Guid sessionId)
+        public IActionResult GetSession(Guid sessionId)
         {
-            var items = Repo.RetrieveSession(sessionId);
-            return new JsonResult(items);
+            Request item = Repo.RetrieveSession(sessionId);
+            return new JsonResult(item);
         }
 
         [HttpGet]
@@ -60,6 +59,27 @@ namespace DemoAPI.Controllers
             }
             return BadRequest();
 
+        }
+
+        [HttpDelete]
+        [Route("/api/delete/{sessionId}")]
+        public void DeleteSession(Guid sessionId)
+        {
+            Repo.DeleteRequest(sessionId);
+        }
+
+        [HttpGet]
+        [Route("/api/get-items")]
+        public IActionResult GetItems()
+        {
+            return Ok(Repo.GetItems());
+        }
+
+        [HttpGet]
+        [Route("/api/get-items/{sessionId}")]
+        public IActionResult GetItemsForSession(Guid sessionId)
+        {
+            return Ok(Repo.GetItemsForSession(sessionId));
         }
     }
 
